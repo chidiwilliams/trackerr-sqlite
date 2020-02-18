@@ -1,6 +1,7 @@
 import sqlite3 from 'sqlite3';
 import {
   ExceptionInfo,
+  ExceptionQueryOpts,
   ExceptionStore,
 } from 'trackerr-abstract-exception-store';
 
@@ -55,14 +56,17 @@ export default class SQLiteStore implements ExceptionStore {
     });
   }
 
-  async get(): Promise<ExceptionInfo[]> {
+  async get(opts: ExceptionQueryOpts): Promise<ExceptionInfo[]> {
     if (!this.tableCreated) {
       await this.createTableIfNotExists();
       this.tableCreated = true;
     }
 
+    const { timestampOrder = 'desc' } = opts;
+    const sqlOrder = { asc: 'ASC', desc: 'DESC' };
+
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM ${this.tableName}`;
+      const sql = `SELECT * FROM ${this.tableName} ORDER BY timestamp ${sqlOrder[timestampOrder]}`;
       this.db.all(sql, (err, rows) => {
         if (err) {
           reject(err);
