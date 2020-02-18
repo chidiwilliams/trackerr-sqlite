@@ -11,7 +11,9 @@ export default class SQLiteStore implements ExceptionStore {
 
   constructor(filename: string) {
     this.db = new sqlite3.Database(filename, (err) => {
-      console.error(err);
+      if (err) {
+        throw err;
+      }
     });
   }
 
