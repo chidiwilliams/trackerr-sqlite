@@ -1,8 +1,9 @@
 import sqlite3 from 'sqlite3';
 import {
   ExceptionInfo,
-  ExceptionQueryOpts,
+  ExceptionGetQueryOpts,
   ExceptionStore,
+  ExceptionCountQueryOpts,
 } from 'trackerr-abstract-exception-store';
 
 export default class SQLiteStore implements ExceptionStore {
@@ -56,17 +57,20 @@ export default class SQLiteStore implements ExceptionStore {
     });
   }
 
-  async get(opts: ExceptionQueryOpts): Promise<ExceptionInfo[]> {
+  async get(opts: ExceptionGetQueryOpts): Promise<ExceptionInfo[]> {
     if (!this.tableCreated) {
       await this.createTableIfNotExists();
       this.tableCreated = true;
     }
 
-    const { timestampOrder = 'desc' } = opts;
+    const { timestampOrder = 'desc', page = 1, limit = 50 } = opts;
     const sqlOrder = { asc: 'ASC', desc: 'DESC' };
+    const offset = (page - 1) * limit;
 
     return new Promise((resolve, reject) => {
-      const sql = `SELECT * FROM ${this.tableName} ORDER BY timestamp ${sqlOrder[timestampOrder]}`;
+      const sql = `SELECT * FROM ${this.tableName}
+ORDER BY timestamp ${sqlOrder[timestampOrder]}
+LIMIT ${offset}, ${limit}`;
       this.db.all(sql, (err, rows) => {
         if (err) {
           reject(err);
@@ -78,6 +82,25 @@ export default class SQLiteStore implements ExceptionStore {
           timestamp: new Date(row.timestamp),
         }));
         resolve(exceptions);
+      });
+    });
+  }
+
+  async count(_: ExceptionCountQueryOpts): Promise<number> {
+    if (!this.tableCreated) {
+      await this.createTableIfNotExists();
+      this.tableCreated = true;
+    }
+
+    return new Promise((resolve, reject) => {
+      const sql = `SELECT COUNT(*) FROM ${this.tableName}`;
+      this.db.get(sql, (err, row) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        resolve(row['COUNT(*)']);
       });
     });
   }
