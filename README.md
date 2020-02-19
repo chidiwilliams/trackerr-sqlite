@@ -10,5 +10,5 @@ To create and use an SQLite store:
 import { Client } from 'trackerr';
 import SQLiteStore from 'trackerr-sqlite';
 
-const client = new Client(new SQLiteStore('db.sql'));
+const trackerr = new Client(new SQLiteStore('db.sql'));
 ```
