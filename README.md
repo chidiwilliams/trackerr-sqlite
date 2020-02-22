@@ -8,7 +8,7 @@ To create and use an SQLite store:
 
 ```js
 import { Client } from 'trackerr';
-import SQLiteStore from 'trackerr-sqlite';
+import { SQLiteStore } from 'trackerr-sqlite';
 
 const trackerr = new Client(new SQLiteStore('db.sql'));
 ```

@@ -6,7 +6,7 @@ import {
   ExceptionCountQueryOpts,
 } from 'trackerr-abstract-exception-store';
 
-export default class SQLiteStore implements ExceptionStore {
+export class SQLiteStore implements ExceptionStore {
   private db: sqlite3.Database;
   private tableName = 'exceptions';
   private tableCreated = false;
