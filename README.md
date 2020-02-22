@@ -2,6 +2,12 @@
 
 trackerr-sqlite provides SQLite3 support for [trackerr](https://github.com/chidiwilliams/trackerr). It implements the `ExceptionStore` interface in [trackerr-abstract-exception-store](https://github.com/chidiwilliams/trackerr-abstract-exception-store).
 
+## Installation
+
+```script
+npm install trackerr-sqlite --save
+```
+
 ## Usage
 
 To create and use an SQLite store:
