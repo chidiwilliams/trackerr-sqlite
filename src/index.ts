@@ -63,12 +63,13 @@ export class SQLiteStore implements ExceptionStore {
       this.tableCreated = true;
     }
 
-    const { timestampOrder = 'desc', page = 1, limit = 50 } = opts;
+    const { timestampOrder = 'desc', page = 1, limit = 50, query = '' } = opts;
     const sqlOrder = { asc: 'ASC', desc: 'DESC' };
     const offset = (page - 1) * limit;
 
     return new Promise((resolve, reject) => {
       const sql = `SELECT * FROM ${this.tableName}
+WHERE stack LIKE '%${query}%'
 ORDER BY timestamp ${sqlOrder[timestampOrder]}
 LIMIT ${offset}, ${limit}`;
       this.db.all(sql, (err, rows) => {
@@ -86,14 +87,17 @@ LIMIT ${offset}, ${limit}`;
     });
   }
 
-  async count(_: ExceptionCountQueryOpts): Promise<number> {
+  async count(opts: ExceptionCountQueryOpts): Promise<number> {
     if (!this.tableCreated) {
       await this.createTableIfNotExists();
       this.tableCreated = true;
     }
 
+    const { query = '' } = opts;
+
     return new Promise((resolve, reject) => {
-      const sql = `SELECT COUNT(*) FROM ${this.tableName}`;
+      const sql = `SELECT COUNT(*) FROM ${this.tableName}
+WHERE stack LIKE '%${query}%'`;
       this.db.get(sql, (err, row) => {
         if (err) {
           reject(err);
