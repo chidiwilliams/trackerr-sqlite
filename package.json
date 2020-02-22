@@ -12,6 +12,7 @@
   },
   "author": "Chidi Williams",
   "license": "ISC",
+  "repository": "https://github.com/chidiwilliams/trackerr-sqlite",
   "devDependencies": {
     "@types/sqlite3": "^3.1.6",
     "typescript": "^3.7.5"
